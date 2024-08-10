@@ -15,10 +15,15 @@ import projects.service.ProjectService;
 public class ProjectsApp {
 	private Scanner scanner = new Scanner(System.in);
 	private ProjectService projectService = new ProjectService();
+	private Project curProject;
 
 //@formatter:off
 private List<String> operations = List.of(
-"1) Add a project"		
+"1) Add a project",
+"2) List projects",
+"3) Select a project "
+
+		
 		);
 //@formatter:on	
 
@@ -42,14 +47,56 @@ private List<String> operations = List.of(
 				case 1:
 					createProject();
 					break;
-
+					
+				case 2:
+					listProjects();
+					break;
+					
+				case 3:
+					selectProject();
+					break;
+							
 				default:
-					System.out.println("\n selection " + "is not valid selection. Please try again.");
+					System.out.println("\n" + selection  + "is not valid selection. Please try again.");
 					break;
 				}
 			} catch (Exception e) {
-				System.out.println("\nError: " + e + "Try again please.");
+				System.out.println("\nError: " + e + " Try again please.");
 			}
+		}
+	}
+
+	private void selectProject() {
+	listProjects();
+	Integer projectId = getIntInput("Enter a project ID to select a project");
+	
+	 /* Unselect the current project.*/
+		curProject = null;
+		
+	 /* This will throw an exception if an invalid project ID is entered. */
+		curProject = projectService.fetchProjectById(projectId);
+		
+	}
+
+	private void listProjects() {
+		List<Project>projects = projectService.fetchAllProjects();
+		
+		System.out.println("\nProjects:");
+		projects.forEach(project -> System.out.println("   " + project.getProjectId() + ": " + project.getProjectName()));
+		
+	}
+	
+	private void printOperations() {
+		System.out.println("\nThese are the available selections. Press the Enter key to quit: ");
+		operations.forEach(line -> System.out.println("  " + line));
+		
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nYou are not working with a project.");
+			
+		}
+		else {
+			System.out.println("\nYou are working with project: " + curProject);
+			
 		}
 	}
 
@@ -132,13 +179,5 @@ private List<String> operations = List.of(
 		return input.isBlank() ? null : input.trim();
 	}
 
-	/**
-	 * Print the menu selections, one per line.
-	 */
-	private void printOperations() {
-		System.out.println("\nThese are the available selections. Press the Enter Key to quit:");
-
-		operations.forEach(line -> System.out.println("   " + line));
-	}
 
 }
