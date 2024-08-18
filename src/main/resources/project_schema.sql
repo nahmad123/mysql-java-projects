@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS material;
 DROP TABLE IF EXISTS project;
 
+-- the first one is deleted last. you have to make sure the dependencies are deleted first
 CREATE TABLE project (
 	project_id INT AUTO_INCREMENT NOT NULL,
 	project_name VARCHAR(128) NOT NULL,
@@ -40,10 +41,29 @@ CREATE TABLE category (
 );
 
 CREATE TABLE project_category (
-	project_category INT /*AUTO_INCREMENT*/  NOT NULL,
 	project_id INT NOT NULL,
 	category_id INT NOT NULL,
 	FOREIGN KEY (project_id) REFERENCES project (project_id) ON DELETE CASCADE,
 	FOREIGN KEY (category_id) REFERENCES category (category_id) ON DELETE CASCADE,
 	UNIQUE KEY (project_id, category_id)
 ); 
+
+INSERT INTO project (project_name, estimated_hours, actual_hours, difficulty, notes) 
+VALUES ('Install Door', 25, 15, 5, 'Estimated hours depend on skills and experience');
+INSERT INTO material (project_id, material_name, num_required, cost)
+VALUES (1, 'Door hangers', 4, 5.99);
+INSERT INTO material (project_id, material_name, num_required, cost)
+VALUES (1, 'Nails', 8, 6.99);
+INSERT INTO step (project_id, step_text, step_order)
+VALUES (1, 'Align hangers on opening side', 1);
+INSERT INTO step (project_id, step_text, step_order)
+VALUES (1, 'Screw hangers into frame', 2);
+INSERT INTO category (category_id, category_name)
+VALUES (1, 'Doors and Windows');
+INSERT INTO category (category_id, category_name)
+VALUES (2, 'Repairs');
+INSERT INTO project_category (project_id, category_id) 
+VALUES (1, 1);
+INSERT INTO project_category (project_id, category_id) 
+VALUES (1, 2);
+
